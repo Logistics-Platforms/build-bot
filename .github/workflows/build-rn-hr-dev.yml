@@ -1,15 +1,15 @@
-name: Build Talent Solution App
+name: Build Talent App Development
 
 on:
   repository_dispatch:
     types:
-     - TalentHR-*
+      - TalentHR-development-*
 
 env:
   LANG: en_US.UTF-8
   RUBY_VERSION: 3.0.0
+  ENVIROMENT: development
   REF_NAME: ${{ github.event.client_payload.ref_name }}
-  ENVIROMENT: ${{ github.event.client_payload.environment }}
 
 jobs:
   build:

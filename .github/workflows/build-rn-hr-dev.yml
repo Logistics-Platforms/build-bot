@@ -91,22 +91,22 @@ jobs:
           eas-version: "latest"
           token: ${{ secrets.EXPO_CLI_TOKEN }}
 
-      - name: 🔨 Checl
+      - name: 🔨 Configuring Env from Expo Server
         shell: bash
-        run: bash scripts/helper.sh
+        run: bash scripts/load-expo-env.sh
 
-      - name: 🔨 Load build version and build number
+      - name: 🔨 Configuring Build Version and Number
         shell: bash
-        run: bash scripts/load-build-env.sh
+        run: bash scripts/load-build-version-number.sh
 
       - name: 🔨 Configuring Secret File
-        run: eas env:exec ${{ env.PROFILE }} "yarn load-secret-file"
+        run: bash scripts/load-secret-file.sh
 
-      - name: 🔨 Configuring Build Info and Prebuild
-        run: eas env:exec ${{ env.PROFILE }} "yarn prebuild --platform ${{ matrix.platform }}"
+      - name: 🔨 Prebuild Native Code
+        run: yarn prebuild --platform ${{ matrix.platform }}
 
-      - name: 🏗 Build ${{matrix.platform}}
-        run: bash scripts/build-ci.sh --platform ${{ matrix.platform }} --profile ${{ env.PROFILE }}
+      - name: 🔨 Building for ${{ env.PROFILE }} with environment ${{ env.PROFILE }}
+        run: bash scripts/eas/eas-build-local.sh ${{ matrix.platform }} --profile ${{ env.PROFILE }}
 
-      - name: 🏗 Deploy ${{matrix.platform}}
-        run: eas env:exec ${{ env.PROFILE }} "yarn delivery --platform ${{ matrix.platform }} --profile ${{ env.PROFILE }}"
+      - name: 🎉 Delivery ${{matrix.platform}} App!
+        run: bash scripts/delivery.sh --platform ${{ matrix.platform }} --profile ${{ env.PROFILE }}

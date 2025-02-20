@@ -106,7 +106,7 @@ jobs:
         run: yarn prebuild --platform ${{ matrix.platform }}
 
       - name: 🔨 Building for ${{ env.PROFILE }} with environment ${{ env.PROFILE }}
-        run: bash scripts/eas/eas-build-local.sh ${{ matrix.platform }} --profile ${{ env.PROFILE }}
+        run: bash scripts/eas/eas-build-local.sh ${{ matrix.platform }} ${{ env.PROFILE }}
 
       - name: 🎉 Delivery ${{matrix.platform}} App!
-        run: bash scripts/delivery.sh --platform ${{ matrix.platform }} --profile ${{ env.PROFILE }}
+        run: bash scripts/delivery.sh ${{ matrix.platform }} ${{ env.PROFILE }}

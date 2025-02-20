@@ -1,0 +1,26 @@
+name: Build Talent Solution App
+
+on:
+  repository_dispatch:
+    types:
+     - TalentHR-*
+
+env:
+  LANG: en_US.UTF-8
+  RUBY_VERSION: 3.0.0
+  REF_NAME: ${{ github.event.client_payload.ref_name }}
+  ENVIROMENT: ${{ github.event.client_payload.environment }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.MAIN_REPOSITORY }}
+          token: ${{ secrets.PUBLIC_REPO_PAT }}
+          ref: ${{ github.event.client_payload.ref_name }}
+
+      - name: Build for Talent HR with environment ${{}} tag ${{ github.event.client_payload.ref_name }}
+        run: echo "Building from Private Repo 1!"

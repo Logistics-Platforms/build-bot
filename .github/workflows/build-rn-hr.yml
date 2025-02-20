@@ -20,7 +20,7 @@ jobs:
         with:
           repository: ${{ secrets.MAIN_REPOSITORY }}
           token: ${{ secrets.PUBLIC_REPO_PAT }}
-          ref: ${{ github.event.client_payload.ref_name }}
+          ref: ${{ env.REF_NAME }}
 
-      - name: Build for Talent HR with environment ${{}} tag ${{ github.event.client_payload.ref_name }}
+      - name: Build for Talent HR with environment ${{ env.ENVIROMENT }} tag ${{ env.REF_NAME }}
         run: echo "Building from Private Repo 1!"

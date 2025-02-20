@@ -41,12 +41,12 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          # - name: "macos-14"
-          #   platform: "ios"
-          #   type: ipa
-          - name: "ubuntu-22.04"
-            platform: "android"
-            type: apk
+          - name: "macos-14"
+            platform: "ios"
+            type: ipa
+          # - name: "ubuntu-22.04"
+          #   platform: "android"
+          #   type: apk
 
     runs-on: "macos-14"
     steps:
@@ -69,18 +69,13 @@ jobs:
           bundler-cache: true
 
       - name: 🔨 Setup cocoapods
-        if: matrix.platform == 'IOS'
+        if: matrix.platform == 'ios'
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
           version: 1.14.3
 
-      - name: 🔨 Set up Fastlane
-        run: gem install fastlane -NV
-
-      - name: 🔨 Set up Fastlane
-        run: |
-          bundle install
-          bundle exec fastlane add_plugin firebase_app_distribution
+      - name: 🔨 Install Vendor
+        run: bundle install
 
       - name: 🔨 Install Dependencies
         uses: actions/cache/restore@v4

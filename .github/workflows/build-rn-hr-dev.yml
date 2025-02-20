@@ -93,7 +93,7 @@ jobs:
 
       - name: 🔨 Configuring Env from Expo Server
         shell: bash
-        run: bash scripts/load-expo-env.sh
+        run: bash scripts/load-expo-env.sh ${{ env.PROFILE }}
 
       - name: 🔨 Configuring Build Version and Number
         shell: bash

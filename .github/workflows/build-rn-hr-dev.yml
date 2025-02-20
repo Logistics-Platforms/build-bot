@@ -13,7 +13,16 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build ${{matrix.platform}}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          #   - name: "macos-14"
+          #     platform: "IOS"
+          - name: "ubuntu-22.04"
+            platform: "android"
+    runs-on: "macos-14"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -22,5 +31,47 @@ jobs:
           token: ${{ secrets.PUBLIC_REPO_PAT }}
           ref: ${{ env.REF_NAME }}
 
-      - name: Build for Talent HR with environment ${{ env.ENVIROMENT }} tag ${{ env.REF_NAME }}
-        run: echo "Building from Private Repo 1!"
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 🏗 Setup Ruby ${{env.RUBY_VERSION}}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{env.RUBY_VERSION}}
+          bundler-cache: true
+
+      - name: 🏗 Setup cocoapods
+        if: matrix.platform == 'IOS'
+        uses: maxim-lobanov/setup-cocoapods@v1
+        with:
+          version: 1.14.3
+
+      - name: 🏗 Set up Firebase
+        if: matrix.platform == 'android'
+        shell: bash
+        run: npm install -g firebase-tools
+
+      - name: Install Dependencies
+        shell: bash
+        run: yarn install
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: "latest"
+          token: ${{ secrets.EXPO_CLI_TOKEN }}
+
+      - name: 🔨 Load build version and build number
+        shell: bash
+        run: bash scripts/load-build-env.sh
+
+      - name: 🔨 Configuring Secret File
+        run: eas env:exec ${{env.ENVIROMENT}} "yarn load-secret-file"
+
+      - name: 🔨 Configuring Build Info and Prebuild
+        run: eas env:exec ${{env.ENVIROMENT}} "yarn prebuild"
+
+      - name: 🏗 Build and Deploy
+        run: yarn build --platform ${{matrix.platform}} --profile ${{env.ENVIROMENT}}

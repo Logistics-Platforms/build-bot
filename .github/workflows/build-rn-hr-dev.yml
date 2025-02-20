@@ -74,10 +74,13 @@ jobs:
         with:
           version: 1.14.3
 
-      - name: 🔨 Set up Firebase
-        if: matrix.platform == 'android'
-        shell: bash
-        run: npm install -g firebase-tools
+      - name: 🔨 Set up Fastlane
+        run: gem install fastlane -NV
+
+      - name: 🔨 Set up Fastlane
+        run: |
+          bundle install
+          bundle exec fastlane add_plugin firebase_app_distribution
 
       - name: 🔨 Install Dependencies
         uses: actions/cache/restore@v4
@@ -105,7 +108,7 @@ jobs:
       - name: 🔨 Prebuild Native Code
         run: yarn prebuild --platform ${{ matrix.platform }}
 
-      - name: 🔨 Building for ${{ env.PROFILE }} with environment ${{ env.PROFILE }}
+      - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.PROFILE }}
         run: bash scripts/eas/eas-build-local.sh ${{ matrix.platform }} ${{ env.PROFILE }}
 
       - name: 🎉 Delivery ${{matrix.platform}} App!

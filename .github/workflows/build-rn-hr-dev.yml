@@ -95,9 +95,9 @@ jobs:
       # - name: 🔨 Configuring Env from Expo Server
       #   shell: bash
       #   run: bash scripts/load-expo-env.sh ${{ env.PROFILE }}
-      # - name: 🔨 Configuring Build Version and Number
-      #   shell: bash
-      #   run: bash scripts/load-build-version-number.sh
+      - name: 🔨 Configuring Build Version and Number
+        shell: bash
+        run: bash scripts/load-build-version-number.sh
       # - name: 🔨 Configuring Secret File
       #   run: bash scripts/load-secret-file.sh
       # - name: 🔨 Prebuild Native Code

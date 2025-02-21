@@ -41,12 +41,12 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: "macos-14"
-            platform: "ios"
-            type: ipa
-          # - name: "ubuntu-22.04"
-          #   platform: "android"
-          #   type: apk
+          # - name: "macos-14"
+          #   platform: "ios"
+          #   type: ipa
+          - name: "ubuntu-22.04"
+            platform: "android"
+            type: apk
 
     runs-on: "macos-14"
     steps:
@@ -98,6 +98,7 @@ jobs:
       - name: 🔨 Configuring Build Version and Number
         shell: bash
         run: bash scripts/load-build-version-number.sh
+        # run: fastlane parse_version_tag tag:${{ env.REF_NAME }}
       # - name: 🔨 Configuring Secret File
       #   run: bash scripts/load-secret-file.sh
       # - name: 🔨 Prebuild Native Code

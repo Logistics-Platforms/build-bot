@@ -41,12 +41,12 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          # - name: "macos-14"
-          #   platform: "ios"
-          #   type: ipa
-          - name: "ubuntu-22.04"
-            platform: "android"
-            type: apk
+          - name: "macos-14"
+            platform: "ios"
+            type: ipa
+          # - name: "ubuntu-22.04"
+          #   platform: "android"
+          #   type: apk
 
     runs-on: "macos-14"
     steps:

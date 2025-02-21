@@ -8,7 +8,7 @@ on:
 env:
   LANG: en_US.UTF-8
   RUBY_VERSION: 3.0.0
-  PROFILE: production
+  ENVIRONMENT: production
   REF_NAME: ${{ github.event.client_payload.ref_name }}
 
 jobs:
@@ -42,9 +42,12 @@ jobs:
       matrix:
         include:
           - name: "macos-14"
+            profile: production
             platform: "ios"
             type: ipa
+
           - name: "ubuntu-22.04"
+            profile: production
             platform: "android"
             type: apk
 
@@ -95,8 +98,8 @@ jobs:
       - name: 🔨 Parse App version and number
         run: fastlane parse_version_tag tag:${{ env.REF_NAME }}
 
-      - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.PROFILE }}
-        run: fastlane ${{ matrix.platform }} build profile:${{ env.PROFILE }}
+      - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
+        run: fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
 
-      # - name: 🎉 Distrubute ${{matrix.platform}} App!
-      #   run: fastlane ${{ matrix.platform }} distribute profile:${{ env.PROFILE }}
+      - name: 🎉 Distrubute ${{matrix.platform}} App!
+        run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}

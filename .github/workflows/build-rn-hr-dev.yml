@@ -68,14 +68,14 @@ jobs:
           ruby-version: ${{env.RUBY_VERSION}}
           bundler-cache: true
 
-      - name: 🔨 Setup cocoapods
-        if: matrix.platform == 'ios'
-        uses: maxim-lobanov/setup-cocoapods@v1
-        with:
-          version: 1.14.3
+      # - name: 🔨 Setup cocoapods
+      #   if: matrix.platform == 'ios'
+      #   uses: maxim-lobanov/setup-cocoapods@v1
+      #   with:
+      #     version: 1.14.3
 
-      - name: 🔨 Install Vendor
-        run: bundle install
+      # - name: 🔨 Install Vendor
+      #   run: bundle install
 
       - name: 🔨 Install Dependencies
         uses: actions/cache/restore@v4

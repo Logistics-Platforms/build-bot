@@ -98,5 +98,5 @@ jobs:
       - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.PROFILE }}
         run: fastlane ${{ matrix.platform }} build profile:${{ env.PROFILE }}
 
-      # - name: 🎉 Distrubute ${{matrix.platform}} App!
-      #   run: fastlane ${{ matrix.platform }} distribute profile:${{ env.PROFILE }}
+      - name: 🎉 Distrubute ${{matrix.platform}} App!
+        run: fastlane ${{ matrix.platform }} distribute profile:${{ env.PROFILE }}

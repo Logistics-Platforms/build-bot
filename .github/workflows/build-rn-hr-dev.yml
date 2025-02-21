@@ -89,6 +89,9 @@ jobs:
           eas-version: "latest"
           token: ${{ secrets.EXPO_CLI_TOKEN }}
 
+      - name: 🔨 Install Fastlane
+        run: gem install fastlane -NV
+
       # - name: 🔨 Configuring Env from Expo Server
       #   shell: bash
       #   run: bash scripts/load-expo-env.sh ${{ env.PROFILE }}

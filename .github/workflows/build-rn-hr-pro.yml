@@ -46,10 +46,10 @@ jobs:
             platform: "ios"
             type: ipa
 
-          - name: "ubuntu-22.04"
-            profile: production
-            platform: "android"
-            type: apk
+          # - name: "ubuntu-22.04"
+          #   profile: production
+          #   platform: "android"
+          #   type: apk
 
     runs-on: "macos-14"
     steps:

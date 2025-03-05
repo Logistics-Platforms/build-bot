@@ -80,11 +80,14 @@ jobs:
       # - name: 🔨 Install Vendor
       #   run: bundle install
 
-      - name: 🔨 Install Dependencies
+      - name: 🔨 Restore Dependencies
         uses: actions/cache/restore@v4
         with:
           path: node_modules
           key: node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: 🔨 Install Dependencies
+        run: yarn install
 
       - name: 🔨 Setup EAS
         uses: expo/expo-github-action@v8

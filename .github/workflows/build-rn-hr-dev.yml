@@ -38,7 +38,7 @@ jobs:
     name: Build ${{matrix.platform}}
     needs: [check-cache]
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
           - name: "macos-14"

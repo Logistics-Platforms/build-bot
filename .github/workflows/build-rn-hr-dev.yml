@@ -77,6 +77,10 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Xcode Version
+        if: matrix.platform == 'ios'
+        run: echo "======== Xcode Version $(xcodebuild -version | grep Xcode)"
+
       # - name: 🔨 Setup cocoapods
       #   if: matrix.platform == 'ios'
       #   uses: maxim-lobanov/setup-cocoapods@v1

@@ -41,7 +41,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "macos-14"
+          - name: "macos-latest"
             profile: development
             platform: "ios"
             type: ipa
@@ -51,7 +51,7 @@ jobs:
             platform: "android"
             type: apk
 
-    runs-on: "macos-14"
+    runs-on: ${{matrix.name}}
     steps:
       - name: 🔨 Checkout Repository
         uses: actions/checkout@v4
@@ -70,6 +70,16 @@ jobs:
         with:
           ruby-version: ${{env.RUBY_VERSION}}
           bundler-cache: true
+
+      - name: 🔨 Setup Xcode
+        if: matrix.platform == 'ios'
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 16.0
+
+      - name: Xcode Version
+        if: matrix.platform == 'ios'
+        run: echo "======== Xcode Version $(xcodebuild -version | grep Xcode)"
 
       # - name: 🔨 Setup cocoapods
       #   if: matrix.platform == 'ios'

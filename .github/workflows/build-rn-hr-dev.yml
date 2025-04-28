@@ -46,7 +46,7 @@ jobs:
             platform: "ios"
             type: ipa
 
-          - name: "ubuntu-22.04"
+          - name: "ubuntu-24.04"
             profile: development
             platform: "android"
             type: apk
@@ -71,9 +71,9 @@ jobs:
           ruby-version: ${{env.RUBY_VERSION}}
           bundler-cache: true
 
-      - name: 🔨 Xcode Version
-        if: matrix.platform == 'ios'
-        run: echo "======== Xcode Version $(xcodebuild -version)"
+      # - name: 🔨 Xcode Version
+      #   if: matrix.platform == 'ios'
+      #   run: echo "======== Xcode Version $(xcodebuild -version)"
 
       # - name: 🔨 Setup cocoapods
       #   if: matrix.platform == 'ios'

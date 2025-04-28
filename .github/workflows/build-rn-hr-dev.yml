@@ -46,7 +46,7 @@ jobs:
             platform: "ios"
             type: ipa
 
-          - name: "ubuntu-24.04"
+          - name: "macos-15"
             profile: development
             platform: "android"
             type: apk

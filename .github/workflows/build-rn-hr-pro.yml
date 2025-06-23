@@ -41,13 +41,13 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: "macos-14"
+          - name: "macos-15"
             profile: production
             platform: "ios"
             type: ipa
 
           - name: "macos-15"
-            profile: development
+            profile: production
             platform: "android"
             type: apk
 
@@ -59,26 +59,6 @@ jobs:
           repository: ${{ secrets.MAIN_REPOSITORY }}
           token: ${{ secrets.PUBLIC_REPO_PAT }}
           ref: ${{ env.REF_NAME }}
-
-      # - name: 🔨 Setup Node
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 22
-
-      # - name: 🔨 Setup Ruby ${{env.RUBY_VERSION}}
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: ${{env.RUBY_VERSION}}
-      #     bundler-cache: true
-
-      # - name: 🔨 Setup cocoapods
-      #   if: matrix.platform == 'ios'
-      #   uses: maxim-lobanov/setup-cocoapods@v1
-      #   with:
-      #     version: 1.14.3
-
-      # - name: 🔨 Install Vendor
-      #   run: bundle install
 
       - name: 🔨 Restore Dependencies
         uses: actions/cache/restore@v4

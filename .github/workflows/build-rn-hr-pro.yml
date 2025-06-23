@@ -46,12 +46,12 @@ jobs:
             platform: "ios"
             type: ipa
 
-          # - name: "ubuntu-22.04"
-          #   profile: production
-          #   platform: "android"
-          #   type: apk
+          - name: "macos-15"
+            profile: development
+            platform: "android"
+            type: apk
 
-    runs-on: "macos-14"
+    runs-on: ${{matrix.name}}
     steps:
       - name: 🔨 Checkout Repository
         uses: actions/checkout@v4
@@ -60,16 +60,16 @@ jobs:
           token: ${{ secrets.PUBLIC_REPO_PAT }}
           ref: ${{ env.REF_NAME }}
 
-      - name: 🔨 Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+      # - name: 🔨 Setup Node
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 22
 
-      - name: 🔨 Setup Ruby ${{env.RUBY_VERSION}}
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{env.RUBY_VERSION}}
-          bundler-cache: true
+      # - name: 🔨 Setup Ruby ${{env.RUBY_VERSION}}
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: ${{env.RUBY_VERSION}}
+      #     bundler-cache: true
 
       # - name: 🔨 Setup cocoapods
       #   if: matrix.platform == 'ios'
@@ -95,14 +95,14 @@ jobs:
           eas-version: "latest"
           token: ${{ secrets.EXPO_CLI_TOKEN }}
 
-      - name: 🔨 Install Fastlane
-        run: gem install fastlane -NV
+      # - name: 🔨 Install Fastlane
+      #   run: gem install fastlane -NV
 
       - name: 🔨 Parse App version and number
-        run: fastlane parse_version_tag tag:${{ env.REF_NAME }}
+        run: bundle exec fastlane parse_version_tag tag:${{ env.REF_NAME }}
 
       - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
-        run: fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
+        run: bundle exec fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
 
       - name: 🎉 Distrubute ${{matrix.platform}} App!
-        run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}
+        run: bundle exec fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}

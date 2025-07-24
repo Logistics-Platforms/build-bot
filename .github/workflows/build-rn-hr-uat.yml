@@ -1,0 +1,88 @@
+name: Build Talent App UAT
+
+on:
+  repository_dispatch:
+    types:
+      - TalentHR-uat-*
+
+env:
+  LANG: en_US.UTF-8
+  RUBY_VERSION: 3.0.0
+  ENVIRONMENT: preview
+  REF_NAME: ${{ github.event.client_payload.ref_name }}
+
+jobs:
+  check-cache:
+    name: Check Cache
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.MAIN_REPOSITORY }}
+          token: ${{ secrets.PUBLIC_REPO_PAT }}
+          ref: ${{ env.REF_NAME }}
+
+      - name: Cache Node Modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Install Node Modules
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install
+
+  build:
+    name: Build ${{matrix.platform}}
+    needs: [check-cache]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "macos-15"
+            profile: preview
+            platform: "ios"
+            type: ipa
+
+          - name: "macos-15"
+            profile: preview
+            platform: "android"
+            type: apk
+
+    runs-on: ${{matrix.name}}
+    steps:
+      - name: 🔨 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.MAIN_REPOSITORY }}
+          token: ${{ secrets.PUBLIC_REPO_PAT }}
+          ref: ${{ env.REF_NAME }}
+
+      - name: 🔨 Restore Dependencies
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: 🔨 Install Dependencies
+        run: yarn install
+
+      - name: 🔨 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: "latest"
+          token: ${{ secrets.EXPO_CLI_TOKEN }}
+
+      # - name: 🔨 Install Fastlane
+      #   run: gem install fastlane -NV
+
+      - name: 🔨 Parse App version and number
+        run: bundle exec fastlane parse_version_tag tag:${{ env.REF_NAME }}
+
+      - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
+        run: bundle exec fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
+
+      - name: 🎉 Distrubute ${{matrix.platform}} App!
+        run: bundle exec fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}

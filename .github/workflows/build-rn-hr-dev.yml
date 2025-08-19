@@ -14,7 +14,7 @@ env:
 jobs:
   check-cache:
     name: Check Cache
-    runs-on: self-hosted
+    runs-on: macos-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -41,12 +41,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "self-hosted"
+          - name: "macos-15"
             profile: development
             platform: "ios"
             type: ipa
 
-          - name: "self-hosted"
+          - name: "macos-15"
             profile: development
             platform: "android"
             type: apk

@@ -78,6 +78,9 @@ jobs:
       # - name: 🔨 Install Fastlane
       #   run: gem install fastlane -NV
 
+      - name: 🔨 Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
+
       - name: 🔨 Parse App version and number
         run: bundle exec fastlane parse_version_tag tag:${{ env.REF_NAME }}
 

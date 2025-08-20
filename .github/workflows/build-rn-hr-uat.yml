@@ -14,7 +14,7 @@ env:
 jobs:
   check-cache:
     name: Check Cache
-    runs-on: self-hosted
+    runs-on: macos-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -41,12 +41,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "self-hosted"
+          - name: "macos-15"
             profile: preview
             platform: "ios"
             type: ipa
 
-          - name: "self-hosted"
+          - name: "macos-15"
             profile: preview
             platform: "android"
             type: apk
@@ -77,6 +77,8 @@ jobs:
 
       # - name: 🔨 Install Fastlane
       #   run: gem install fastlane -NV
+      - name: 🔨 Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: 🔨 Parse App version and number
         run: bundle exec fastlane parse_version_tag tag:${{ env.REF_NAME }}

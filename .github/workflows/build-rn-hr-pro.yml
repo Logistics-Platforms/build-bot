@@ -51,6 +51,11 @@ jobs:
             platform: "android"
             type: aab
 
+          - name: "macos-15"
+            profile: production
+            platform: "android"
+            type: apk
+
     runs-on: ${{matrix.name}}
     steps:
       - name: 🔨 Checkout Repository
@@ -77,6 +82,8 @@ jobs:
 
       # - name: 🔨 Install Fastlane
       #   run: gem install fastlane -NV
+      - name: 🔨 Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: 🔨 Parse App version and number
         run: bundle exec fastlane parse_version_tag tag:${{ env.REF_NAME }}
@@ -84,14 +91,14 @@ jobs:
       - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
         run: bundle exec fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
 
-      - name: 📦 Upload ${{ matrix.platform }} Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.platform }}-${{ matrix.type }}-${{ env.REF_NAME }}
-          path: |
-            **/*.${{ matrix.type }}
-          retention-days: 30
-          if-no-files-found: error
+      # - name: 📦 Upload ${{ matrix.platform }} Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ matrix.platform }}-${{ matrix.type }}-${{ env.REF_NAME }}
+      #     path: |
+      #       **/*.${{ matrix.type }}
+      #     retention-days: 30
+      #     if-no-files-found: error
 
       - name: 🎉 Distribute ${{matrix.platform}} App!
         run: bundle exec fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}

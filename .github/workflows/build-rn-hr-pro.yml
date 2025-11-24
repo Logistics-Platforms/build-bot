@@ -17,7 +17,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ secrets.MAIN_REPOSITORY }}
           token: ${{ secrets.PUBLIC_REPO_PAT }}

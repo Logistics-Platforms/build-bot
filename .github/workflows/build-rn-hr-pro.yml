@@ -59,7 +59,7 @@ jobs:
     runs-on: ${{matrix.name}}
     steps:
       - name: 🔨 Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ secrets.MAIN_REPOSITORY }}
           token: ${{ secrets.PUBLIC_REPO_PAT }}

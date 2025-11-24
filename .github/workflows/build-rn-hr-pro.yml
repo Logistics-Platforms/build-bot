@@ -41,17 +41,17 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: "macos-15"
+          - name: "macos-latest"
             profile: production
             platform: "ios"
             type: ipa
 
-          - name: "macos-15"
+          - name: "macos-latest"
             profile: production
             platform: "android"
             type: aab
 
-          - name: "macos-15"
+          - name: "macos-latest"
             profile: production
             platform: "android"
             type: apk

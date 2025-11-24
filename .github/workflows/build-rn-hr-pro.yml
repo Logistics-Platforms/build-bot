@@ -17,21 +17,21 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           repository: ${{ secrets.MAIN_REPOSITORY }}
           token: ${{ secrets.PUBLIC_REPO_PAT }}
           ref: ${{ env.REF_NAME }}
 
-      - name: Cache Node Modules
-        id: cache-node-modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('yarn.lock') }}
+      # - name: Cache Node Modules
+      #   id: cache-node-modules
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: node_modules
+      #     key: node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install Node Modules
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        # if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install
 
   build:
@@ -59,17 +59,17 @@ jobs:
     runs-on: ${{matrix.name}}
     steps:
       - name: 🔨 Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           repository: ${{ secrets.MAIN_REPOSITORY }}
           token: ${{ secrets.PUBLIC_REPO_PAT }}
           ref: ${{ env.REF_NAME }}
 
-      - name: 🔨 Restore Dependencies
-        uses: actions/cache/restore@v4
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('yarn.lock') }}
+      # - name: 🔨 Restore Dependencies
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     path: node_modules
+      #     key: node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: 🔨 Install Dependencies
         run: yarn install

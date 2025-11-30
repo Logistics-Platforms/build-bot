@@ -14,7 +14,17 @@ env:
 jobs:
   check-cache:
     name: Check Cache
-    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "macos-latest"
+            os: "macos"
+
+          - name: "ubuntu-latest"
+            os: "ubuntu"
+
+    runs-on: ${{matrix.os}}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -28,7 +38,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{matrix.os}}-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install Node Modules
         if: steps.cache-node-modules.outputs.cache-hit != 'true'

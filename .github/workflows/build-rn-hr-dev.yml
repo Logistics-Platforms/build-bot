@@ -13,7 +13,7 @@ env:
 
 jobs:
   check-cache:
-    name: Check Cache
+    name: Check Cache ${{matrix.os}}
     strategy:
       fail-fast: false
       matrix:
@@ -52,11 +52,13 @@ jobs:
       matrix:
         include:
           - name: "macos-15"
+            os: "macos"
             profile: development
             platform: "ios"
             type: ipa
 
-          - name: "macos-15"
+          - name: "ubuntu-latest"
+            os: "ubuntu"
             profile: development
             platform: "android"
             type: apk
@@ -74,7 +76,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{matrix.os}}-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: 🔨 Install Dependencies
         run: yarn install
@@ -84,9 +86,6 @@ jobs:
         with:
           eas-version: "latest"
           token: ${{ secrets.EXPO_CLI_TOKEN }}
-
-      # - name: 🔨 Install Fastlane
-      #   run: gem install fastlane -NV
 
       - name: 🔨 Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app

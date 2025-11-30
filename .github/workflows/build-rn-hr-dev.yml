@@ -88,6 +88,7 @@ jobs:
           token: ${{ secrets.EXPO_CLI_TOKEN }}
 
       - name: 🔨 Select Xcode
+        if: ${{matrix.os == 'macos'}}
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: 🔨 Parse App version and number

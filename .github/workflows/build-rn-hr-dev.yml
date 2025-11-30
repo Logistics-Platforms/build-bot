@@ -24,7 +24,7 @@ jobs:
           - name: "ubuntu-latest"
             os: "ubuntu"
 
-    runs-on: ${{matrix.os}}
+    runs-on: ${{matrix.name}}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

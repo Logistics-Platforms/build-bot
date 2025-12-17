@@ -13,8 +13,18 @@ env:
 
 jobs:
   check-cache:
-    name: Check Cache
-    runs-on: macos-latest
+    name: Check Cache ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "macos-latest"
+            os: "macos"
+
+          - name: "ubuntu-latest"
+            os: "ubuntu"
+
+    runs-on: ${{matrix.name}}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -28,7 +38,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{matrix.os}}-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install Node Modules
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -42,11 +52,13 @@ jobs:
       matrix:
         include:
           - name: "macos-15"
+            os: "macos"
             profile: preview
             platform: "ios"
             type: ipa
 
-          - name: "macos-15"
+          - name: "ubuntu-latest"
+            os: "ubuntu"
             profile: preview
             platform: "android"
             type: apk
@@ -64,7 +76,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('yarn.lock') }}
+          key: ${{matrix.os}}-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: 🔨 Install Dependencies
         run: yarn install
@@ -75,9 +87,8 @@ jobs:
           eas-version: "latest"
           token: ${{ secrets.EXPO_CLI_TOKEN }}
 
-      # - name: 🔨 Install Fastlane
-      #   run: gem install fastlane -NV
       - name: 🔨 Select Xcode
+        if: ${{matrix.os == 'macos'}}
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: 🔨 Parse App version and number

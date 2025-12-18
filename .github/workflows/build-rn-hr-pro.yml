@@ -13,8 +13,18 @@ env:
 
 jobs:
   check-cache:
-    name: Check Cache
-    runs-on: macos-latest
+    name: Check Cache ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "macos-latest"
+            os: "macos"
+
+          - name: "ubuntu-latest"
+            os: "ubuntu"
+
+    runs-on: ${{matrix.name}}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -23,15 +33,15 @@ jobs:
           token: ${{ secrets.PUBLIC_REPO_PAT }}
           ref: ${{ env.REF_NAME }}
 
-      # - name: Cache Node Modules
-      #   id: cache-node-modules
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: node_modules
-      #     key: node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Cache Node Modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{matrix.os}}-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install Node Modules
-        # if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install
 
   build:
@@ -42,17 +52,20 @@ jobs:
       matrix:
         include:
           - name: "macos-latest"
+            os: "macos"
             profile: production
             platform: "ios"
             type: ipa
 
-          - name: "macos-latest"
+          - name: "ubuntu-latest"
+            os: "ubuntu"
             profile: production
             platform: "android"
             type: aab
 
-          - name: "macos-latest"
-            profile: production
+          - name: "ubuntu-latest"
+            os: "ubuntu"
+            profile: production-apk
             platform: "android"
             type: apk
 
@@ -65,11 +78,11 @@ jobs:
           token: ${{ secrets.PUBLIC_REPO_PAT }}
           ref: ${{ env.REF_NAME }}
 
-      # - name: 🔨 Restore Dependencies
-      #   uses: actions/cache/restore@v4
-      #   with:
-      #     path: node_modules
-      #     key: node-modules-${{ hashFiles('yarn.lock') }}
+      - name: 🔨 Restore Dependencies
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{matrix.os}}-node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: 🔨 Install Dependencies
         run: yarn install
@@ -83,13 +96,14 @@ jobs:
       # - name: 🔨 Install Fastlane
       #   run: gem install fastlane -NV
       - name: 🔨 Select Xcode
+        if: ${{matrix.os == 'macos'}}
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: 🔨 Parse App version and number
-        run: bundle exec fastlane parse_version_tag tag:${{ env.REF_NAME }}
+        run: fastlane parse_version_tag tag:${{ env.REF_NAME }}
 
       - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
-        run: bundle exec fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
+        run: fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
 
       # - name: 📦 Upload ${{ matrix.platform }} Artifact
       #   uses: actions/upload-artifact@v4
@@ -101,4 +115,4 @@ jobs:
       #     if-no-files-found: error
 
       - name: 🎉 Distribute ${{matrix.platform}} App!
-        run: bundle exec fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}
+        run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}

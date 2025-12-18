@@ -63,12 +63,6 @@ jobs:
             platform: "android"
             type: aab
 
-          - name: "ubuntu-latest"
-            os: "ubuntu"
-            profile: production-apk
-            platform: "android"
-            type: apk
-
     runs-on: ${{matrix.name}}
     steps:
       - name: 🔨 Checkout Repository

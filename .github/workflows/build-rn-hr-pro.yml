@@ -63,6 +63,12 @@ jobs:
             platform: "android"
             type: aab
 
+          - name: "ubuntu-latest"
+            os: "ubuntu"
+            profile: production-apk
+            platform: "android"
+            type: apk
+
     runs-on: ${{matrix.name}}
     steps:
       - name: 🔨 Checkout Repository
@@ -87,8 +93,6 @@ jobs:
           eas-version: "latest"
           token: ${{ secrets.EXPO_CLI_TOKEN }}
 
-      # - name: 🔨 Install Fastlane
-      #   run: gem install fastlane -NV
       - name: 🔨 Select Xcode
         if: ${{matrix.os == 'macos'}}
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
@@ -108,5 +112,5 @@ jobs:
           retention-days: 30
           if-no-files-found: error
 
-      - name: 🎉 Distribute ${{matrix.platform}} App!
-        run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}
+      # - name: 🎉 Distribute ${{matrix.platform}} App!
+      #   run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}

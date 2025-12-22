@@ -1,0 +1,33 @@
+name: Deploy
+description: "Deploys the application for the specified platform"
+inputs:
+  platform:
+    description: "Platform to deploy (ios or android)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy ${{ inputs.platform }}
+      shell: bash
+      run: |
+        echo "Deploying ${{ inputs.platform }} application..."
+        # Add your deployment commands here
+        # fastlane ${{ inputs.platform }} deploy
+
+    # - name: Download ${{ inputs.platform }} artifact
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: ${{ inputs.platform }}-build
+    #     path: build/${{ inputs.platform }}
+
+    # - name: Deploy ${{ inputs.platform }}
+    #   shell: bash
+    #   run: |
+    #     echo "Deploying ${{ inputs.platform }} application..."
+    #     # Add your deployment commands here
+    #     # fastlane ${{ inputs.platform }} deploy
+

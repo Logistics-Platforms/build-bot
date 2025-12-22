@@ -97,5 +97,14 @@ jobs:
       - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
         run: fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
 
-      - name: 🎉 Distrubute ${{matrix.platform}} App!
-        run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}
+      - name: 📦 Upload ${{ matrix.platform }} Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-${{ matrix.type }}-${{ env.REF_NAME }}
+          path: |
+            **/*.${{ matrix.type }}
+          retention-days: 30
+          if-no-files-found: error
+
+      # - name: 🎉 Distrubute ${{matrix.platform}} App!
+      #   run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}

@@ -4,30 +4,26 @@ inputs:
   platform:
     description: "Platform to deploy (ios or android)"
     required: true
+  profile:
+    description: "Profile to deploy (development, preview, production)"
+    required: true
+  build-tag:
+    description: "Tag to deploy"
+    required: true
+  build-type:
+    description: "Type of build (ipa, apk, aab)"
+    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Download ${{ inputs.platform }} artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.platform }}-${{ inputs.build-type }}-${{ inputs.build-tag }}
+        path: .
 
     - name: Deploy ${{ inputs.platform }}
       shell: bash
-      run: |
-        echo "Deploying ${{ inputs.platform }} application..."
-        # Add your deployment commands here
-        # fastlane ${{ inputs.platform }} deploy
-
-    # - name: Download ${{ inputs.platform }} artifact
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: ${{ inputs.platform }}-build
-    #     path: build/${{ inputs.platform }}
-
-    # - name: Deploy ${{ inputs.platform }}
-    #   shell: bash
-    #   run: |
-    #     echo "Deploying ${{ inputs.platform }} application..."
-    #     # Add your deployment commands here
-    #     # fastlane ${{ inputs.platform }} deploy
+      run: fastlane ${{ inputs.platform }} distribute profile:${{ inputs.profile }}
 

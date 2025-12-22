@@ -1,87 +1,75 @@
-name: Manual Build and deploy DEV Portal
+name: Build Test
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
+env:
+  LANG: en_US.UTF-8
+  RUBY_VERSION: 3.0.0
+  ENVIRONMENT: development
+  REF_NAME: ${{ github.event.client_payload.ref_name }}
 
 jobs:
-    check-cache:
-        name: Check Cache
-        runs-on: ubuntu-latest
-        # outputs:
-        #     cache-hit: ${{ steps.cache-check.outputs.cache-hit }}
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  check-cache:
+    name: Check Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "18"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
 
-            # - name: Cache dependencies
-            #   id: cache-check
-            #   uses: actions/cache@v3
-            #   with:
-            #       path: |
-            #           node_modules
-            #           ~/.npm
-            #       key: ${{ runner.os }}-cache-${{ hashFiles('**/package-lock.json') }}
-            #       restore-keys: |
-            #           ${{ runner.os }}-cache-
+      - name: Test
+        run: echo "Run Cache Check"
 
-            - name: Test
-              run: echo "Run Cache Check"
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+    needs: check-cache
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ios
+            build-type: ipa
+          - platform: android
+            build-type: apk
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    build-ios:
-        name: Build iOS
-        runs-on: ubuntu-latest
-        needs: check-cache
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+      - name: Build ${{ matrix.platform }}
+        uses: ./.github/actions/build
+        with:
+          platform: ${{ matrix.platform }}
+          profile: development
+          build-tag: ${{ env.REF_NAME }}
+          build-type: ${{ matrix.build-type }}
+          expo-token: ${{ secrets.EXPO_CLI_TOKEN }}
+          cache-key: node-modules-${{ hashFiles('yarn.lock') }}
 
-            - name: Build iOS
-              uses: ./.github/actions/build
-              with:
-                  platform: ios
-                  node-version: "18"
-                  cache-hit: ${{ needs.check-cache.outputs.cache-hit }}
+  deploy:
+    name: Deploy ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ !cancelled() }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ios
+            build-type: ipa
+          - platform: android
+            build-type: apk
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    build-android:
-        name: Build Android
-        runs-on: ubuntu-latest
-        needs: check-cache
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Build Android
-              uses: ./.github/actions/build
-              with:
-                  platform: android
-                  node-version: "18"
-                  cache-hit: ${{ needs.check-cache.outputs.cache-hit }}
-
-    deploy-ios:
-        name: Deploy iOS
-        runs-on: ubuntu-latest
-        needs: build-ios
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - uses: ./.github/actions/deploy
-              with:
-                  platform: ios
-
-    deploy-android:
-        name: Deploy Android
-        runs-on: ubuntu-latest
-        needs: build-android
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - uses: ./.github/actions/deploy
-              with:
-                  platform: android
+      - uses: ./.github/actions/deploy
+        with:
+          platform: ${{ matrix.platform }}
+          profile: development
+          build-tag: ${{ env.REF_NAME }}
+          build-type: ${{ matrix.build-type }}

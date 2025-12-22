@@ -1,13 +1,28 @@
 name: Build
 description: "Builds the application for the specified platform"
 inputs:
-  platform:
-    description: "Platform to build (ios or android)"
-    required: true
   node-version:
     description: "Node.js version to use"
     required: false
     default: "18"
+  platform:
+    description: "Platform to build (ios or android)"
+    required: true
+  profile:
+    description: "Profile to build (development, preview, production)"
+    required: true
+  build-tag:
+    description: "Tag to build"
+    required: true
+  build-type:
+    description: "Type of build (ipa, apk, aab)"
+    required: true
+  expo-token:
+    description: "Expo token to use"
+    required: true
+  cache-key:
+    description: "Cache key to use"
+    required: true
   cache-hit:
     description: "Whether cache was hit in previous job"
     required: false
@@ -16,13 +31,43 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: 🔨 Restore Dependencies
+      uses: actions/cache/restore@v4
       with:
-        node-version: ${{ inputs.node-version }}
+        path: node_modules
+        key: ${{ inputs.cache-key }}
+
+    - name: 🔨 Install Dependencies
+      shell: bash
+      run: yarn install
+    
+    - name: 🔨 Setup EAS
+      uses: expo/expo-github-action@v8
+      with:
+        expo-version: "latest"
+        token: ${{ inputs.expo-token }}
+
+    - name: 🔨 Select Xcode
+      if: ${{ inputs.platform == 'ios' }}
+      shell: bash
+      run: sudo xcode-select --switch /Applications/Xcode_16.4.app
+
+    - name: 🔨 Parse App version and number
+      shell: bash
+      run: fastlane parse_version_tag tag:${{ inputs.build-tag }}
+
+    - name: 🔨 Building ${{ inputs.platform }}
+      shell: bash
+      run: fastlane ${{ inputs.platform }} build profile:${{ inputs.profile }}
+
+    - name: 📦 Upload ${{ inputs.platform }} Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.platform }}-${{ inputs.build-type }}-${{ inputs.build-tag }}
+        path: |
+          **/*.${{ inputs.build-type }}
+        retention-days: 30
+        if-no-files-found: error
 
     # - name: Restore cache
     #   if: inputs.cache-hit == 'true'

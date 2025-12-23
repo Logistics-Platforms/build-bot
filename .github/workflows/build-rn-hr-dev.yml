@@ -11,6 +11,7 @@ env:
   ENVIRONMENT: development
   REF_NAME: ${{ github.event.client_payload.ref_name }}
   FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+  FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
   FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
 
 jobs:

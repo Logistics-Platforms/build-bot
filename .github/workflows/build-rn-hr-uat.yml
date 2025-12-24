@@ -10,9 +10,11 @@ env:
   RUBY_VERSION: 3.0.0
   ENVIRONMENT: preview
   REF_NAME: ${{ github.event.client_payload.ref_name }}
+  FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
   FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
   FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
   FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+  BUILD_PROFILE: preview
 
 jobs:
   check-cache:
@@ -56,13 +58,11 @@ jobs:
         include:
           - name: "macos-15"
             os: "macos"
-            profile: preview
             platform: "ios"
             type: ipa
 
           - name: "ubuntu-latest"
             os: "ubuntu"
-            profile: preview
             platform: "android"
             type: apk
 
@@ -94,11 +94,14 @@ jobs:
         if: ${{matrix.os == 'macos'}}
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
-      - name: 🔨 Parse App version and number
-        run: fastlane parse_version_tag tag:${{ env.REF_NAME }}
+      - name: 🔨 Load Environment
+        run: yarn load:env --profile ${{ env.BUILD_PROFILE }}
+
+      - name: 🔨 Load App version and number
+        run: yarn load:version ${{ env.REF_NAME }}
 
       - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
-        run: fastlane ${{ matrix.platform }} build profile:${{ matrix.profile }}
+        run: yarn build:app --platform ${{ matrix.platform }} --profile ${{ env.BUILD_PROFILE }}
 
       - name: 📦 Upload ${{ matrix.platform }} Artifact
         uses: actions/upload-artifact@v4
@@ -110,4 +113,4 @@ jobs:
           if-no-files-found: error
 
       - name: 🎉 Distrubute ${{matrix.platform}} App!
-        run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}
+        run: yarn delivery:app --platform ${{ matrix.platform }} --profile ${{ env.BUILD_PROFILE }}

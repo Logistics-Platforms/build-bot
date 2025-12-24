@@ -14,6 +14,7 @@ env:
   FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
   FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
   FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+  BUILD_PROFILE: development
 
 jobs:
   check-cache:
@@ -57,13 +58,11 @@ jobs:
         include:
           - name: "macos-15"
             os: "macos"
-            profile: development
             platform: "ios"
             type: ipa
 
           - name: "ubuntu-latest"
             os: "ubuntu"
-            profile: development
             platform: "android"
             type: apk
 
@@ -96,13 +95,13 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: 🔨 Load Environment
-        run: yarn load:env --profile ${{ matrix.profile }}
+        run: yarn load:env --profile ${{ env.BUILD_PROFILE }}
 
       - name: 🔨 Load App version and number
         run: yarn load:version ${{ env.REF_NAME }}
 
       - name: 🔨 Building ${{ matrix.platform }} with environment ${{ env.ENVIRONMENT }}
-        run: yarn build:app --platform ${{ matrix.platform }} --profile ${{ matrix.profile }}
+        run: yarn build:app --platform ${{ matrix.platform }} --profile ${{ env.BUILD_PROFILE }}
 
       - name: 📦 Upload ${{ matrix.platform }} Artifact
         uses: actions/upload-artifact@v4
@@ -114,4 +113,4 @@ jobs:
           if-no-files-found: error
 
       - name: 🎉 Distribute ${{matrix.platform}} App!
-        run: yarn delivery:app --platform ${{ matrix.platform }} --profile ${{ matrix.profile }}
+        run: yarn delivery:app --platform ${{ matrix.platform }} --profile ${{ env.BUILD_PROFILE }}

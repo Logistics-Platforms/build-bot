@@ -54,10 +54,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - name: "macos-15"
-          #   os: "macos"
-          #   platform: "ios"
-          #   type: ipa
+          - name: "macos-15"
+            os: "macos"
+            platform: "ios"
+            type: ipa
 
           - name: "ubuntu-latest"
             os: "ubuntu"
@@ -81,12 +81,6 @@ jobs:
 
       - name: 🔨 Install Dependencies
         run: yarn install
-
-      - name: 🔨 Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.2
-          bundler-cache: true
 
       - name: 🔨 Setup EAS
         uses: expo/expo-github-action@v8

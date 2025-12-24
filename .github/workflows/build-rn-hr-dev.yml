@@ -93,7 +93,7 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: 🔨 Load Secrets
-        run: yarn load:secrets
+        run: yarn load:secret
 
       - name: 🔨 Load Environment
         run: yarn load:env --profile ${{ env.BUILD_PROFILE }}

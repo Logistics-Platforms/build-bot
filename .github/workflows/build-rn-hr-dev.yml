@@ -10,10 +10,7 @@ env:
   RUBY_VERSION: 3.0.0
   ENVIRONMENT: development
   REF_NAME: ${{ github.event.client_payload.ref_name }}
-  FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-  FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-  FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
-  FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+  ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
   FIREBASE_CLI_TOKEN: ${{ secrets.FIREBASE_CLI_TOKEN }}
   BUILD_PROFILE: development
 
@@ -94,6 +91,9 @@ jobs:
       - name: 🔨 Select Xcode
         if: ${{matrix.os == 'macos'}}
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
+
+      - name: 🔨 Load Secrets
+        run: yarn load:secrets
 
       - name: 🔨 Load Environment
         run: yarn load:env --profile ${{ env.BUILD_PROFILE }}

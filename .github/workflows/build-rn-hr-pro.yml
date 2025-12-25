@@ -120,5 +120,5 @@ jobs:
           retention-days: 30
           if-no-files-found: error
 
-      # - name: 🎉 Distribute ${{matrix.platform}} App!
-      #   run: fastlane ${{ matrix.platform }} distribute profile:${{ matrix.profile }}
+      - name: 🎉 Distribute ${{matrix.platform}} App!
+        run: yarn delivery:app --platform ${{ matrix.platform }} --profile ${{ matrix.profile }}
